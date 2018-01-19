@@ -29,7 +29,7 @@ services:
       - overlay
 
   data-setup:
-    image: psingh4321/mongo-db
+    image: psingh4321/hcs-data-setup
     depends_on:
       - mongo1
       - mongo2

@@ -17,7 +17,7 @@ echo "Create service for mysql database"
 docker service create --replicas 1 --network commerce --name db-users --detach=false -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root -e MYSQL_USER=mysqluser -e MYSQL_PASSWORD=mysqlpw psingh4321/users-db
 
 echo "Setting up replica set for mongo db, also setting up test data for catalog application"
-docker service create --replicas 1 --network commerce --restart-max-attempts 5 --name data-setup --detach=false -e MONGO1=mongo1 -e MONGO2=mongo2 -e MONGO3=mongo3 -e RS=commercers psingh4321/mongo-db
+docker service create --replicas 1 --network commerce --restart-max-attempts 5 --name data-setup --detach=false -e MONGO1=mongo1 -e MONGO2=mongo2 -e MONGO3=mongo3 -e RS=commercers psingh4321/hcs-data-setup
 
 echo "Create service for service registry (HCS-EUREKA)"
 docker service create --replicas 1 --network commerce --name hcs-eureka --detach=false -p 8001:8001 psingh4321/hcs-eureka
