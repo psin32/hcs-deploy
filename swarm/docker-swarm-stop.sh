@@ -1,5 +1,9 @@
 #!/bin/bash
 
+docker service rm hcs-order
+
+docker service rm hcs-payment
+
 docker service rm hcs-catalog
 
 docker service rm hcs-users
