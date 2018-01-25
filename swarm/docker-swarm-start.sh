@@ -14,7 +14,7 @@ echo "Create service for mongodb 3rd instance"
 docker service create --replicas 1 --network commerce --name mongo3 --detach=true -p 27019:27017 mongo mongod --replSet commercers
 
 echo "Create service for mysql database"
-docker service create --replicas 1 --network commerce --name db-users --detach=false -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root -e MYSQL_USER=mysqluser -e MYSQL_PASSWORD=mysqlpw psingh4321/users-db
+docker service create --replicas 1 --network commerce --name db-users --detach=false -p 3306 -e MYSQL_ROOT_PASSWORD=root -e MYSQL_USER=mysqluser -e MYSQL_PASSWORD=mysqlpw psingh4321/users-db
 
 echo "Setting up replica set for mongo db, also setting up test data for catalog application"
 docker service create --replicas 1 --network commerce --restart-max-attempts 5 --name data-setup --detach=false -e MONGO1=mongo1 -e MONGO2=mongo2 -e MONGO3=mongo3 -e RS=commercers psingh4321/hcs-data-setup
@@ -26,29 +26,32 @@ echo "Create service for API gateway (HCS-ZUUL)"
 docker service create --replicas 1 --network commerce --name hcs-zuul --detach=true -p 8000:8000 psingh4321/hcs-zuul
 
 echo "Create service for HCS-USER application"
-docker service create --replicas 2 --network commerce --name hcs-users --detach=true -p 8080:8080 --constraint=node.role==manager psingh4321/hcs-users
+docker service create --replicas 2 --network commerce --name hcs-users --detach=true -p 8080 --constraint=node.role==manager psingh4321/hcs-users
 
 echo "Create service for HCS-CATALOG application"
-docker service create --replicas 2 --network commerce --name hcs-catalog --detach=true -p 8090:8090 psingh4321/hcs-catalog
+docker service create --replicas 2 --network commerce --name hcs-catalog --detach=true -p 8090 psingh4321/hcs-catalog
 
 echo "Create service for HCS-ORDER application"
-docker service create --replicas 2 --network commerce --name hcs-order --detach=true -p 8060:8060 psingh4321/hcs-order
+docker service create --replicas 2 --network commerce --name hcs-order --detach=true -p 8060 psingh4321/hcs-order:1.0
 
 echo "Create service for HCS-PAYMENT application"
-docker service create --replicas 2 --network commerce --name hcs-payment --detach=true -p 8050:8050 psingh4321/hcs-payment
+docker service create --replicas 2 --network commerce --name hcs-payment --detach=true -p 8050 psingh4321/hcs-payment:1.0
 
 echo "Create service for HCS-UI application"
-docker service create --replicas 2 --network commerce --name hcs-ui --detach=true -p 80:5000 psingh4321/hcs-ui
+docker service create --replicas 2 --network commerce --name hcs-ui --detach=true -p 80:5000 psingh4321/hcs-ui:1.0
+
+echo "Create service for HCS-ADMIN-UI application"
+docker service create --replicas 2 --network commerce --name hcs-admin-ui --detach=true -p 81:5001 psingh4321/hcs-admin-ui
 
 echo "Create service for zookeeper"
 docker service create --replicas 1 --network commerce --name zookeeper --detach=false \
-    -p 2181:2181 \
+    -p 2181 \
     -e ZOOKEEPER_CLIENT_PORT=2181 \
     -e ZOOKEEPER_TICK_TIME=2000 \
     confluentinc/cp-zookeeper:4.0.0
 
 echo "Create service for kafka"
-docker service create --replicas 1 --network commerce --name kafka --detach=false -p 9092:9092 \
+docker service create --replicas 1 --network commerce --name kafka --detach=false -p 9092 \
     --hostname kafka \
     -e KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181 \
     -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092 \
@@ -56,7 +59,7 @@ docker service create --replicas 1 --network commerce --name kafka --detach=fals
     confluentinc/cp-kafka:4.0.0
 
 echo "Create service for schema-registry"
-docker service create --replicas 1 --network commerce --name schema-registry --detach=false -p 8081:8081 \
+docker service create --replicas 1 --network commerce --name schema-registry --detach=false -p 8081 \
   --hostname schema-registry \
   -e SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL=zookeeper:2181 \
   -e SCHEMA_REGISTRY_HOST_NAME=schema-registry \

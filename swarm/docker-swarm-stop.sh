@@ -24,6 +24,8 @@ docker service rm mongo1
 
 docker service rm hcs-ui
 
+docker service rm hcs-admin-ui
+
 docker service rm kafka-connect
 
 docker service rm schema-registry
